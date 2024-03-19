@@ -32,11 +32,14 @@ class EvenementVehicule
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateEvenement = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $origineEvenement = null;
-
     #[ORM\ManyToOne]
     private ?Vehicule $vehicule = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $intermediaireVente = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $origineEvenement = null;
 
     public function getId(): ?int
     {
@@ -48,7 +51,7 @@ class EvenementVehicule
         return $this->compteEvenement;
     }
 
-    public function setCompteEvenement(string $compteEvenement): static
+    public function setCompteEvenement(?string $compteEvenement): static
     {
         $this->compteEvenement = $compteEvenement;
 
@@ -60,7 +63,7 @@ class EvenementVehicule
         return $this->compteDernierEvenement;
     }
 
-    public function setCompteDernierEvenement(string $compteDernierEvenement): static
+    public function setCompteDernierEvenement(?string $compteDernierEvenement): static
     {
         $this->compteDernierEvenement = $compteDernierEvenement;
 
@@ -108,21 +111,9 @@ class EvenementVehicule
         return $this->dateEvenement;
     }
 
-    public function setDateEvenement(\DateTimeInterface $dateEvenement): static
+    public function setDateEvenement(?\DateTimeInterface $dateEvenement): static
     {
         $this->dateEvenement = $dateEvenement;
-
-        return $this;
-    }
-
-    public function getOrigineEvenement(): ?\DateTimeInterface
-    {
-        return $this->origineEvenement;
-    }
-
-    public function setOrigineEvenement(\DateTimeInterface $origineEvenement): static
-    {
-        $this->origineEvenement = $origineEvenement;
 
         return $this;
     }
@@ -135,6 +126,30 @@ class EvenementVehicule
     public function setVehicule(?Vehicule $vehicule): static
     {
         $this->vehicule = $vehicule;
+
+        return $this;
+    }
+
+    public function getIntermediaireVente(): ?string
+    {
+        return $this->intermediaireVente;
+    }
+
+    public function setIntermediaireVente(?string $intermediaireVente): static
+    {
+        $this->intermediaireVente = $intermediaireVente;
+
+        return $this;
+    }
+
+    public function getOrigineEvenement(): ?string
+    {
+        return $this->origineEvenement;
+    }
+
+    public function setOrigineEvenement(?string $origineEvenement): static
+    {
+        $this->origineEvenement = $origineEvenement;
 
         return $this;
     }

@@ -32,7 +32,7 @@ class Compte
         return $this->compteAffaire;
     }
 
-    public function setCompteAffaire(string $compteAffaire): static
+    public function setCompteAffaire(?string $compteAffaire): static
     {
         $this->compteAffaire = $compteAffaire;
 
@@ -44,7 +44,7 @@ class Compte
         return $this->typeProspect;
     }
 
-    public function setTypeProspect(string $typeProspect): static
+    public function setTypeProspect(?string $typeProspect): static
     {
         $this->typeProspect = $typeProspect;
 

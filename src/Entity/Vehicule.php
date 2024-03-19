@@ -53,6 +53,9 @@ class Vehicule
     #[ORM\ManyToOne]
     private ?Vendeur $vendeur = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $proprietaire = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,7 +66,7 @@ class Vehicule
         return $this->numeroFiche;
     }
 
-    public function setNumeroFiche(int $numeroFiche): static
+    public function setNumeroFiche(?int $numeroFiche): static
     {
         $this->numeroFiche = $numeroFiche;
 
@@ -75,7 +78,7 @@ class Vehicule
         return $this->dateMiseEnCirculation;
     }
 
-    public function setDateMiseEnCirculation(\DateTimeInterface $dateMiseEnCirculation): static
+    public function setDateMiseEnCirculation(?\DateTimeInterface $dateMiseEnCirculation): static
     {
         $this->dateMiseEnCirculation = $dateMiseEnCirculation;
 
@@ -87,7 +90,7 @@ class Vehicule
         return $this->dateAchat;
     }
 
-    public function setDateAchat(\DateTimeInterface $dateAchat): static
+    public function setDateAchat(?\DateTimeInterface $dateAchat): static
     {
         $this->dateAchat = $dateAchat;
 
@@ -99,7 +102,7 @@ class Vehicule
         return $this->dateDernierEvenement;
     }
 
-    public function setDateDernierEvenement(\DateTimeInterface $dateDernierEvenement): static
+    public function setDateDernierEvenement(?\DateTimeInterface $dateDernierEvenement): static
     {
         $this->dateDernierEvenement = $dateDernierEvenement;
 
@@ -111,7 +114,7 @@ class Vehicule
         return $this->kilometrage;
     }
 
-    public function setKilometrage(int $kilometrage): static
+    public function setKilometrage(?int $kilometrage): static
     {
         $this->kilometrage = $kilometrage;
 
@@ -123,7 +126,7 @@ class Vehicule
         return $this->libelleMarque;
     }
 
-    public function setLibelleMarque(string $libelleMarque): static
+    public function setLibelleMarque(?string $libelleMarque): static
     {
         $this->libelleMarque = $libelleMarque;
 
@@ -135,7 +138,7 @@ class Vehicule
         return $this->libelleModele;
     }
 
-    public function setLibelleModele(string $libelleModele): static
+    public function setLibelleModele(?string $libelleModele): static
     {
         $this->libelleModele = $libelleModele;
 
@@ -147,7 +150,7 @@ class Vehicule
         return $this->version;
     }
 
-    public function setVersion(string $version): static
+    public function setVersion(?string $version): static
     {
         $this->version = $version;
 
@@ -159,7 +162,7 @@ class Vehicule
         return $this->VIN;
     }
 
-    public function setVIN(string $VIN): static
+    public function setVIN(?string $VIN): static
     {
         $this->VIN = $VIN;
 
@@ -171,7 +174,7 @@ class Vehicule
         return $this->immatriculation;
     }
 
-    public function setImmatriculation(string $immatriculation): static
+    public function setImmatriculation(?string $immatriculation): static
     {
         $this->immatriculation = $immatriculation;
 
@@ -183,7 +186,7 @@ class Vehicule
         return $this->libelleEnergie;
     }
 
-    public function setLibelleEnergie(string $libelleEnergie): static
+    public function setLibelleEnergie(?string $libelleEnergie): static
     {
         $this->libelleEnergie = $libelleEnergie;
 
@@ -210,6 +213,18 @@ class Vehicule
     public function setVendeur(?Vendeur $vendeur): static
     {
         $this->vendeur = $vendeur;
+
+        return $this;
+    }
+
+    public function getProprietaire(): ?string
+    {
+        return $this->proprietaire;
+    }
+
+    public function setProprietaire(?string $proprietaire): static
+    {
+        $this->proprietaire = $proprietaire;
 
         return $this;
     }

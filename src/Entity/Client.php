@@ -57,7 +57,7 @@ class Client
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(?string $nom): static
     {
         $this->nom = $nom;
 
@@ -69,7 +69,7 @@ class Client
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): static
+    public function setPrenom(?string $prenom): static
     {
         $this->prenom = $prenom;
 
@@ -81,7 +81,7 @@ class Client
         return $this->libelleCivilite;
     }
 
-    public function setLibelleCivilite(string $libelleCivilite): static
+    public function setLibelleCivilite(?string $libelleCivilite): static
     {
         $this->libelleCivilite = $libelleCivilite;
 
@@ -93,7 +93,7 @@ class Client
         return $this->telephoneDomicile;
     }
 
-    public function setTelephoneDomicile(string $telephoneDomicile): static
+    public function setTelephoneDomicile(?string $telephoneDomicile): static
     {
         $this->telephoneDomicile = $telephoneDomicile;
 
