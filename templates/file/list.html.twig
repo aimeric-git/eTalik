@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste{% endblock %}
+
+{% block body %}
+
+<div>
+    <h1>Ma liste</h1>
+
+    {% if datas is empty %}
+        <p class="text-center">Pas encore de données.</p>
+    {% endif %}
+
+    <table class="table table-boardered">
+        <thead>
+            <tr>
+                <div class="w-25">
+                    <form id="searchForm" action="{{ path('list_data') }}" method="GET">
+                        {{ form_start(searchForm) }}
+                        {{ form_widget(searchForm.nom, { 'attr': {'placeholder': 'Rechercher par nom', 'id':'nomForm'} }) }}
+                        <button type="submit" class="btn btn-primary">Rechercher</button>
+                        {{ form_end(searchForm) }}
+                    </form>
+                </div>
+            </tr>
+            <tr>
+                <th>{{ knp_pagination_sortable(paginator, 'id', 'c.id') }}</th>
+                <th>{{ knp_pagination_sortable(paginator, 'Nom', 'c.nom') }}</th>
+                <th>Prenom</th>
+                <th>Civilité</th>
+                <th>Téléphone domicile</th>
+                <th>Téléphone portable</th>
+                <th>Téléphone Job</th>
+                <th>Email</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in datas %}
+                <tr>
+                    <td> {{ data.id }} </td>
+                    <td> {{ data.nom }} </td>
+                    <td> {{ data.prenom }} </td>
+                    <td> {{ data.libelleCivilite }} </td>
+                    <td> {{ data.telephoneDomicile }} </td>
+                    <td> {{ data.telephonePortable }} </td>
+                    <td> {{ data.telephoneJob }} </td>
+                    <td> {{ data.email }} </td>
+                    <td><button class="btn btn-primary">Modifier</button></td>
+                    <td><button class="btn btn-danger" onclick="deleteItem({{ data.id }})">Supprimer</button></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        {{ knp_pagination_render(paginator) }}
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#searchForm').submit(function(event) {
+            event.preventDefault(); 
+            
+            var formData = $(this).serialize(); 
+            var nom = $('#nomForm').val();
+            
+            $.ajax({
+                url: '/list',
+                type: $(this).attr('method'), 
+                data: {nom: nom}, 
+                success: function(response) {
+                    console.log('response = = ', nom);
+                }
+            });
+        });
+
+    });
+        function deleteItem(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
+                $.ajax({
+                    url: '/delete/' + id,
+                    type: 'DELETE',
+                    success: function(response) {
+                        // Gérer la réponse (par exemple, actualiser la page)
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Gérer les erreurs (afficher un message d'erreur par exemple)
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        }
+</script>
+{% endblock %}

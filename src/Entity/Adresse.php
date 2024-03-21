@@ -19,10 +19,10 @@ class Adresse
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $complementAdresse = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $codePostal = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $ville = null;
 
     #[ORM\OneToOne(inversedBy: 'adresse', cascade: ['persist', 'remove'])]

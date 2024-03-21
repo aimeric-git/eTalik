@@ -14,10 +14,10 @@ class EvenementVehicule
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable:true)]
     private ?string $compteEvenement = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable:true)]
     private ?string $compteDernierEvenement = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -29,10 +29,10 @@ class EvenementVehicule
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $numeroDossier = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable:true)]
     private ?\DateTimeInterface $dateEvenement = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'evenementsVehicule')]
     private ?Vehicule $vehicule = null;
 
     #[ORM\Column(length: 255, nullable: true)]

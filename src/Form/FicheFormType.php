@@ -18,6 +18,7 @@ class FicheFormType extends AbstractType
                 'label' => 'Fichier',
                 'required' => true, 
                 'mapped' => false, 
+                'attr' => ['class' => 'form-control']
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Insérer', 

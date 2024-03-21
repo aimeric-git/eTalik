@@ -8,6 +8,12 @@ use App\Entity\Compte;
 use App\Entity\EvenementVehicule;
 use App\Entity\Vehicule;
 use App\Entity\Vendeur;
+use App\Factory\AdresseFactory;
+use App\Factory\ClientFactory;
+use App\Factory\CompteFactory;
+use App\Factory\EvenementVehiculeFactory;
+use App\Factory\VehiculeFactory;
+use App\Factory\VendeurFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -30,13 +36,14 @@ class FileSM
     {
         $spreadsheet = IOFactory::load($filePath);
         $sheet = $spreadsheet->getActiveSheet();
-        $adresse = new Adresse();
-        $client = new Client();
-        $compte = new Compte();
-        $evenement = new EvenementVehicule();
-        $vehicule = new Vehicule();
-        $vendeur = new Vendeur();
         foreach ($sheet->getRowIterator() as $row) {
+            $adresse = new Adresse();
+            $client = new Client();
+            $compte = new Compte();
+            $evenement = new EvenementVehicule();
+            $vehicule = new Vehicule();
+            $vendeur = new Vendeur();
+            
             // Ignorer la première ligne si elle contient les en-tete
             $rowData = [];
             if ($row->getRowIndex() == 1) {
@@ -53,41 +60,12 @@ class FileSM
                 $rowData[] = $value;
             }
 
-            $compte->setCompteAffaire($rowData[0]);
-            $evenement->setCompteEvenement($rowData[1]);
-            $evenement->setCompteDernierEvenement($rowData[2]);
-            $vehicule->setNumeroFiche($rowData[3]);
-            $client->setLibelleCivilite($rowData[4]);
-            $vehicule->setProprietaire($rowData[5]);
-            $client->setNom($rowData[6]);
-            $client->setPrenom($rowData[7]);
-            $adresse->setNumeroVoie($rowData[8]);
-            $adresse->setComplementAdresse($rowData[9]);
-            $adresse->setCodePostal($rowData[10]);
-            $adresse->setVille($rowData[11]);
-            $client->setTelephoneDomicile($rowData[12]);
-            $client->setTelephonePortable($rowData[13]);
-            $client->setTelephoneJob($rowData[14]);
-            $client->setEmail($rowData[15]);
-            $vehicule->setDateMiseEnCirculation($rowData[16]);
-            $vehicule->setDateAchat($rowData[17]);
-            $vehicule->setDateDernierEvenement($rowData[18]);
-            $vehicule->setLibelleMarque($rowData[19]);
-            $vehicule->setLibelleModele($rowData[20]);
-            $vehicule->setVersion($rowData[21]);
-            $vehicule->setVIN($rowData[22]);
-            $vehicule->setImmatriculation($rowData[23]);
-            $compte->setTypeProspect($rowData[24]);
-            $vehicule->setKilometrage($rowData[25]);
-            $vehicule->setLibelleEnergie($rowData[26]);
-            $vendeur->setVendeurVN($rowData[27]);
-            $vendeur->setVendeurVO($rowData[28]);
-            $evenement->setCommentaireFacturation($rowData[29]);
-            $evenement->setType($rowData[30]);
-            $evenement->setNumeroDossier($rowData[31]);
-            $evenement->setIntermediaireVente($rowData[32]);
-            $evenement->setDateEvenement($rowData[33]);
-            $evenement->setOrigineEvenement($rowData[34]);
+            AdresseFactory::insertFromFile($adresse, $rowData[8], $rowData[9], $rowData[10], $rowData[9]);
+            ClientFactory::insertFromFile($client, $rowData[4], $rowData[6], $rowData[7], $rowData[12], $rowData[13], $rowData[14], $rowData[15]);
+            CompteFactory::insertFromFile($compte, $rowData[0], $rowData[24]);
+            EvenementVehiculeFactory::insertFromFile($evenement, $rowData[1], $rowData[2], $rowData[29], $rowData[30], $rowData[31], $rowData[32], $rowData[33], $rowData[34]);
+            VehiculeFactory::insertFromFile($vehicule, $rowData[3], $rowData[5], $rowData[16], $rowData[17], $rowData[18], $rowData[19], $rowData[20], $rowData[21], $rowData[22], $rowData[23], $rowData[25], $rowData[26]);
+            VendeurFactory::insertFromFile($vendeur, $rowData[27], $rowData[28]);
 
             $adresse->setClient($client);
             $vehicule->setClient($client);
@@ -115,29 +93,22 @@ class FileSM
     public function cryptFile(string $filePath)
     {
 
-        // Clé de cryptage (à stocker en toute sécurité)
         $key = random_bytes(32);
         $keyHex = bin2hex($key); 
 
-        // Chargez le contenu du fichier XLSX
         $spreadsheet = IOFactory::load($filePath);
 
-        // Initialisez un tampon de sortie
         $writer = new Xlsx($spreadsheet);
         ob_start();
 
-        // Écrivez la feuille de calcul dans le tampon de sortie
         $writer->save('php://output');
 
-        // Récupérez le contenu du tampon de sortie
         $content = ob_get_clean();
 
-        // Chiffrez le contenu avec AES en utilisant OpenSSL
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
         $encryptedContent = openssl_encrypt($content, 'aes-256-cbc', $keyHex, OPENSSL_RAW_DATA, $iv);
-        // $encryptedContent = openssl_encrypt($content, 'aes-256-cbc', $keyHex, OPENSSL_RAW_DATA);
 
-        // Écrivez le contenu crypté dans le fichier XLSX
         file_put_contents($filePath, $encryptedContent);
     }
+
 }
