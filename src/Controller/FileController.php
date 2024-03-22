@@ -14,6 +14,7 @@ use App\Service\Applicatif\FileSA;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -53,44 +54,39 @@ class FileController extends AbstractController
     #[Route('/list', name: 'list_data')]
     public function listData(Request $request): Response
     {
-        // $searchForm = $this->createFormBuilder()
-        // ->add('nom', TextType::class, [
-        //     'required' => false, 
-        //     'attr' => ['class' => 'form-control']
-        //     ])
-        //     ->getForm();
-        // $searchForm->handleRequest($request);
+        return $this->render('file/list.html.twig');
+    }
 
-        // $filters = [];
-        // $nom = "";
-        // if($searchForm->isSubmitted() && $searchForm->isValid()){
-        //     $nom = $searchForm->getData()["nom"];
-        //     if ($nom) {
-        //         $filters['nom'] = $nom;
-        //     }
-        //     $clients = $this->clientRepo->getClientData(
-        //         $filters,
-        //         $request->query->getInt('page', 1),
-        //         10
-        //     );
-        //     dd($clients);
-        // }
-        $filters = [];
-        $nom = $request->query->get('nom');
-        if ($nom) {
-            $filters['nom'] = $nom;
-        }
-        
+    #[Route('/list-paginate', name: 'list_paginate')]
+    public function listPaginate(Request $request): Response
+    {
+        $page = $request->get('page', 1); 
+        $limit = $request->get('length', 10); 
+        $search = $request->get('search', '');
+
         $clients = $this->clientRepo->getClientData(
-            $filters,
-            $request->query->getInt('page', 1),
-            10
+                $search,
+                $page,
+                $limit
         );
-
-        return $this->render('file/list.html.twig', [
-            'datas' => $clients->getItems(), 
-            'paginator' => $clients,
-            // 'searchForm' => $searchForm->createView()
+        $data = [];
+        foreach ($clients->getItems() as $client) {
+            $data[] = [
+                'id' => $client->getId(),
+                'nom' => $client->getNom(),
+                'prenom' => $client->getPrenom(),
+                'libelleCivilite' => $client->getLibelleCivilite(),
+                'telephoneDomicile' => $client->getTelephoneDomicile(),
+                'telephonePortable' =>  $client->getTelephonePortable(),
+                'telephoneJob' => $client->getTelephoneJob(),
+                'email' => $client->getEmail()
+            ];
+        }
+        return new JsonResponse([
+            'draw' => $request->get('draw', 1),
+            'recordsTotal' => $clients->getTotalItemCount(),
+            'recordsFiltered' => $clients->getTotalItemCount(), 
+            'dataClient' => $data,
         ]);
     }
 

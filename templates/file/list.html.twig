@@ -7,23 +7,11 @@
 <div>
     <h1>Ma liste</h1>
 
-    {% if datas is empty %}
-        <p class="text-center">Pas encore de données.</p>
-    {% endif %}
-
-    <table class="table table-boardered">
+    <table class="table table-boardered" id="maTable">
         <thead>
             <tr>
-                <div class="w-25">
-                    <form id="searchForm" method="GET">
-                        <input type="text" class="form-control" id="nomForm">
-                        <button type="submit" class="btn btn-primary">Rechercher</button>
-                    </form>
-                </div>
-            </tr>
-            <tr>
-                <th>{{ knp_pagination_sortable(paginator, 'id', 'c.id') }}</th>
-                <th>{{ knp_pagination_sortable(paginator, 'Nom', 'c.nom') }}</th>
+                <th>id</th>
+                <th>Nom</th>
                 <th>Prenom</th>
                 <th>Civilité</th>
                 <th>Téléphone domicile</th>
@@ -35,46 +23,54 @@
             </tr>
         </thead>
         <tbody>
-            {% for data in datas %}
-                <tr>
-                    <td> {{ data.id }} </td>
-                    <td> {{ data.nom }} </td>
-                    <td> {{ data.prenom }} </td>
-                    <td> {{ data.libelleCivilite }} </td>
-                    <td> {{ data.telephoneDomicile }} </td>
-                    <td> {{ data.telephonePortable }} </td>
-                    <td> {{ data.telephoneJob }} </td>
-                    <td> {{ data.email }} </td>
-                    <td><a href="{{ path('edit_data', {'id': data.id}) }}" class="btn btn-primary">Modifier</a></td>
-                    <td><button class="btn btn-danger" onclick="deleteData({{ data.id }})">Supprimer</button></td>
-                </tr>
-            {% endfor %}
+            
         </tbody>
     </table>
 
-    <div>
-        {{ knp_pagination_render(paginator) }}
-    </div>
-
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+
     $(document).ready(function() {
-        $('#searchForm').submit(function(event) {
-            event.preventDefault(); 
-            
-            let formData = $(this).serialize(); 
-            let nom = $('#nomForm').val();
-            
-            $.ajax({
-                url: '/list',
-                type: $(this).attr('method'), 
-                data: {nom: nom}, 
-                success: function(response) {
-                    console.log('response = = ', nom);
+
+        $('#maTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "/list-paginate",
+                type: "POST",
+                data: function(d) {
+                    d.page = d.start / d.length + 1; 
+                    d.length = d.length; 
+                    d.orderBy = d.columns[d.order[0].column].id;
+                    d.orderBy = d.columns[d.order[0].column].nom;
+                    d.search = d.search.value;
+                },
+                dataSrc : "dataClient",
+            },
+            columns: [
+                { data: "id" },
+                { data: "nom" },
+                { data: "prenom" },
+                { data: "libelleCivilite" },
+                { data: "telephoneDomicile" },
+                { data: "telephonePortable" },
+                { data: "telephoneJob" },
+                { data: "email" },
+                { 
+                    data: null, 
+                    render: function(data, type, row) {
+                        return '<a href="/list/edit/' + data.id + '" class="btn btn-primary">Modifier</a>';
+                    } 
+                },
+                { 
+                    data: null, 
+                    render: function(data, type, row) {
+                        return '<button class="btn btn-danger" onclick="deleteData(' + data.id + ')">Supprimer</button>';
+                    } 
                 }
-            });
-        });
+            ]
+        }); 
 
     });
         function deleteData(id) {
@@ -83,11 +79,9 @@
                     url: '/list/delete/' + id,
                     type: 'DELETE',
                     success: function(response) {
-                        // Gérer la réponse (par exemple, actualiser la page)
                         window.location.reload();
                     },
                     error: function(xhr, status, error) {
-                        // Gérer les erreurs (afficher un message d'erreur par exemple)
                         console.error(xhr.responseText);
                     }
                 });

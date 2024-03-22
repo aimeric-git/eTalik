@@ -23,7 +23,7 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
-    public function getClientData(array $filters = [], int $page = 1, int $limit = 10): PaginationInterface  
+    public function getClientData(string $filters = "", int $page = 1, int $limit = 10): PaginationInterface  
     {
         $qb = $this->createQueryBuilder('c')
             ->select('c', 'a', 'v')
@@ -32,19 +32,14 @@ class ClientRepository extends ServiceEntityRepository
             ->where('c.deletedAt IS NULL')
         ;
 
-        if (!empty($filters)) {
-            if (isset($filters['nom'])) {
-                $qb->andWhere($qb->expr()->eq('LOWER(c.nom)', ':nom'))
-                    ->setParameter('nom', strtolower($filters['nom']));
-            }
+        if($filters !== ""){
+            $qb->andWhere($qb->expr()->like('LOWER(c.nom)', ':nom'))
+                ->setParameter('nom', '%' . strtolower($filters) . '%');
         }
     
         $qb->getQuery();
 
-        return $this->paginator->paginate($qb, $page, $limit, [
-            'distinct' => true,
-            'sortFieldAllowList' => ['c.id', 'c.nom']
-        ]);
+        return $this->paginator->paginate($qb, $page, $limit);
     }
 
     //    /**
