@@ -15,11 +15,9 @@
         <thead>
             <tr>
                 <div class="w-25">
-                    <form id="searchForm" action="{{ path('list_data') }}" method="GET">
-                        {{ form_start(searchForm) }}
-                        {{ form_widget(searchForm.nom, { 'attr': {'placeholder': 'Rechercher par nom', 'id':'nomForm'} }) }}
+                    <form id="searchForm" method="GET">
+                        <input type="text" class="form-control" id="nomForm">
                         <button type="submit" class="btn btn-primary">Rechercher</button>
-                        {{ form_end(searchForm) }}
                     </form>
                 </div>
             </tr>
@@ -47,8 +45,8 @@
                     <td> {{ data.telephonePortable }} </td>
                     <td> {{ data.telephoneJob }} </td>
                     <td> {{ data.email }} </td>
-                    <td><button class="btn btn-primary">Modifier</button></td>
-                    <td><button class="btn btn-danger" onclick="deleteItem({{ data.id }})">Supprimer</button></td>
+                    <td><a href="{{ path('edit_data', {'id': data.id}) }}" class="btn btn-primary">Modifier</a></td>
+                    <td><button class="btn btn-danger" onclick="deleteData({{ data.id }})">Supprimer</button></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -65,8 +63,8 @@
         $('#searchForm').submit(function(event) {
             event.preventDefault(); 
             
-            var formData = $(this).serialize(); 
-            var nom = $('#nomForm').val();
+            let formData = $(this).serialize(); 
+            let nom = $('#nomForm').val();
             
             $.ajax({
                 url: '/list',
@@ -79,10 +77,10 @@
         });
 
     });
-        function deleteItem(id) {
+        function deleteData(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
                 $.ajax({
-                    url: '/delete/' + id,
+                    url: '/list/delete/' + id,
                     type: 'DELETE',
                     success: function(response) {
                         // Gérer la réponse (par exemple, actualiser la page)

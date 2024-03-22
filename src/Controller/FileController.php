@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\File;
+use App\Factory\ClientFactory;
+use App\Form\ClientEditFormType;
 use App\Form\FicheFormType;
 use App\Repository\ClientRepository;
 use App\Repository\VehiculeRepository;
+use App\Service\Applicatif\ClientSA;
 use App\Service\Applicatif\FileSA;
-use App\Service\Technique\UploadFileST;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -22,7 +24,8 @@ class FileController extends AbstractController
     public function __construct(private EntityManagerInterface $em,
                                 private FileSA $fileSA,
                                 private ClientRepository $clientRepo,
-                                private VehiculeRepository $vehiculeRepo)
+                                private VehiculeRepository $vehiculeRepo,
+                                private ClientSA $clientSA)
     {
         
     }
@@ -50,45 +53,49 @@ class FileController extends AbstractController
     #[Route('/list', name: 'list_data')]
     public function listData(Request $request): Response
     {
-        $searchForm = $this->createFormBuilder()
-        ->add('nom', TextType::class, [
-            'required' => false, 
-            'attr' => ['class' => 'form-control']
-            ])
-            ->getForm();
-            
+        // $searchForm = $this->createFormBuilder()
+        // ->add('nom', TextType::class, [
+        //     'required' => false, 
+        //     'attr' => ['class' => 'form-control']
+        //     ])
+        //     ->getForm();
+        // $searchForm->handleRequest($request);
+
         // $filters = [];
-        // if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-        //     dd('hhhh');
-        //     $nom = $searchForm->get('nom')->getData();
-        //     if ($nom !== null) {
+        // $nom = "";
+        // if($searchForm->isSubmitted() && $searchForm->isValid()){
+        //     $nom = $searchForm->getData()["nom"];
+        //     if ($nom) {
         //         $filters['nom'] = $nom;
         //     }
+        //     $clients = $this->clientRepo->getClientData(
+        //         $filters,
+        //         $request->query->getInt('page', 1),
+        //         10
+        //     );
+        //     dd($clients);
         // }
         $filters = [];
-        if(null !== $request->query->get('nom')){
-            dd($request->query->get('nom'));
-            $filters['nom'] = $request->query->get('nom');
+        $nom = $request->query->get('nom');
+        if ($nom) {
+            $filters['nom'] = $nom;
         }
-
         
-
-    
         $clients = $this->clientRepo->getClientData(
             $filters,
             $request->query->getInt('page', 1),
             10
         );
-    
+
         return $this->render('file/list.html.twig', [
             'datas' => $clients->getItems(), 
             'paginator' => $clients,
-            'searchForm' => $searchForm->createView()
+            // 'searchForm' => $searchForm->createView()
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'delete_data')]
-    public function deleteData($id): Response
+    #[Route('/list/delete/{id}', name: 'delete_data')]
+    public function deleteClient($id): Response
     {
         $client = $this->clientRepo->find($id);
     
@@ -101,5 +108,27 @@ class FileController extends AbstractController
         $this->em->flush();
     
         return $this->json(['message' => 'Entité supprimée avec succès']);
+    }
+
+    #[Route('/list/edit/{id}', name: 'edit_data')]
+    public function editClient($id, Request $request): Response
+    {
+        $client = $this->clientRepo->find($id);
+        $form = $this->createForm(ClientEditFormType::class, $client);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $formData = $form->getData();
+            $updatedClient = $this->clientSA->editClient($formData, $client);
+
+            $this->em->persist($updatedClient);
+            $this->em->flush();
+
+            return $this->redirectToRoute('list_data');
+        }
+
+        return $this->render('file/edit.html.twig', [
+            'editForm' => $form->createView(),
+        ]);
     }
 }

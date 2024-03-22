@@ -3,15 +3,5 @@
 {% block title %}Page d'accueil{% endblock %}
 
 {% block body %}
-<style>
-    
-</style>
 
-<div>
-    <h1>Page d'accueil</h1>
-    <form method="post" action="{{ path('upload_file') }}" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".xlsx">
-        <button type="submit">Insérer</button>
-    </form>
-</div>
 {% endblock %}

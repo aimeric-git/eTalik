@@ -9,8 +9,14 @@
 
 <div>
     <h1>Importation de fichier</h1>
-   
-    {{ form(form) }}
+    <p><a href="{{ path('list_data') }}" class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Lien vers la liste des données.</a></p>
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-6">
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
         
 
 </div>

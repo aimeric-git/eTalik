@@ -16,4 +16,24 @@ class ClientFactory
         $client->setTelephoneJob($telJob);
         $client->setEmail($email);
     }
+
+    public static function updateForm(Client $client, 
+                                        ?string $nom,
+                                        ?string $prenom,
+                                        ?string $libelle, 
+                                        ?string $telDomicile,
+                                        ?string $telPortable,
+                                        ?string $telJob,
+                                        ?string $email)
+    {
+        $client->setNom($nom);
+        $client->setPrenom($prenom);
+        $client->setLibelleCivilite($libelle);
+        $client->setTelephoneDomicile($telDomicile);
+        $client->setTelephonePortable($telPortable);
+        $client->setTelephoneJob($telJob);
+        $client->setEmail($email);
+
+        return $client;
+    }
 }

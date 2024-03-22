@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un client{% endblock %}
+
+{% block body %}
+    <h1 class="text-center mb-9">Modifier un client</h1>
+     <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-6">
+                    {{ form_start(editForm) }}
+                        {{ form_row(editForm.nom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(editForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(editForm.libelleCivilite, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_row(editForm.telephoneDomicile, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(editForm.telephonePortable, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(editForm.telephoneJob, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(editForm.email, {'attr': {'class': 'form-control'}}) }}
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    {{ form_end(editForm) }}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
