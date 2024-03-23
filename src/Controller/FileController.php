@@ -63,11 +63,15 @@ class FileController extends AbstractController
         $page = $request->get('page', 1); 
         $limit = $request->get('length', 10); 
         $search = $request->get('search', '');
+        $orderBy = $request->get('orderBy', 'id'); 
+        $orderDir = $request->get('orderDir', 'asc'); 
 
         $clients = $this->clientRepo->getClientData(
                 $search,
                 $page,
-                $limit
+                $limit,
+                $orderBy,
+                $orderDir
         );
         $data = [];
         foreach ($clients->getItems() as $client) {

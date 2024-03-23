@@ -42,8 +42,8 @@
                 data: function(d) {
                     d.page = d.start / d.length + 1; 
                     d.length = d.length; 
-                    d.orderBy = d.columns[d.order[0].column].id;
-                    d.orderBy = d.columns[d.order[0].column].nom;
+                    d.orderBy = d.order && d.order[0] ? d.columns[d.order[0].column].data : "id";
+                    d.orderDir = d.order && d.order[0] ? d.order[0].dir : "asc"
                     d.search = d.search.value;
                 },
                 dataSrc : "dataClient",

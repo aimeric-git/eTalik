@@ -23,7 +23,7 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
-    public function getClientData(string $filters = "", int $page = 1, int $limit = 10): PaginationInterface  
+    public function getClientData(string $filters = "", int $page = 1, int $limit = 10, string $orderBy = 'id', string $orderDir = 'asc'): PaginationInterface  
     {
         $qb = $this->createQueryBuilder('c')
             ->select('c', 'a', 'v')
@@ -36,6 +36,8 @@ class ClientRepository extends ServiceEntityRepository
             $qb->andWhere($qb->expr()->like('LOWER(c.nom)', ':nom'))
                 ->setParameter('nom', '%' . strtolower($filters) . '%');
         }
+
+        $qb->orderBy('c.' . $orderBy, $orderDir);
     
         $qb->getQuery();
 
